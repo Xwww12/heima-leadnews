@@ -82,6 +82,7 @@
             <artifactId>kafka-streams</artifactId>
         </dependency>
 
+        <!-- 阿里云内容安全服务 -->
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-core</artifactId>
@@ -90,6 +91,12 @@
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-green</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>green20220302</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
         <!--HBase-->
         <dependency>
             <groupId>org.apache.hbase</groupId>

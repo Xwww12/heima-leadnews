@@ -136,6 +136,22 @@
     <orderEntry type="library" name="Maven: com.aliyun:aliyun-java-sdk-green:3.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.aliyun.oss:aliyun-sdk-oss:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: org.jdom:jdom:1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:green20220302:1.0.3" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:tea-util:0.2.16" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:tea-openapi:0.2.8" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:credentials-java:0.2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.ini4j:ini4j:0.5.4" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:alibabacloud-gateway-spi:0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:tea-xml:0.1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.dom4j:dom4j:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.jacoco:org.jacoco.agent:runtime:0.8.4" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:openapiutil:0.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcpkix-jdk15on:1.65" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:1.65" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:endpoint-util:0.0.7" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:tea:1.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:3.14.9" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.17.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.hbase:hbase-client:2.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.hbase.thirdparty:hbase-shaded-protobuf:2.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.hbase:hbase-common:2.1.5" level="project" />

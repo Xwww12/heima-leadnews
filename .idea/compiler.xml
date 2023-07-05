@@ -10,15 +10,17 @@
         <module name="freemarker-demo" />
         <module name="heima-file-starter" />
         <module name="heima-leadnews-wemedia-gateway" />
-        <module name="heima-leadnews-utils" />
         <module name="heima-leadnews-wemedia" />
+        <module name="tess4j-demo" />
         <module name="heima-leadnews-feign-api" />
         <module name="heima-leadnews-user" />
-        <module name="heima-leadnews-app-gateway" />
         <module name="heima-leadnews-article" />
+        <module name="minIO-demo" />
+        <module name="heima-leadnews-schedule" />
+        <module name="heima-leadnews-utils" />
+        <module name="heima-leadnews-app-gateway" />
         <module name="heima-leadnews-common" />
         <module name="heima-leadnews-model" />
-        <module name="minIO-demo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -33,6 +35,7 @@
       <module name="heima-leadnews-feign-api" target="1.8" />
       <module name="heima-leadnews-gateway" target="1.8" />
       <module name="heima-leadnews-model" target="1.8" />
+      <module name="heima-leadnews-schedule" target="1.8" />
       <module name="heima-leadnews-service" target="1.8" />
       <module name="heima-leadnews-test" target="1.8" />
       <module name="heima-leadnews-user" target="1.8" />
@@ -40,13 +43,14 @@
       <module name="heima-leadnews-wemedia" target="1.8" />
       <module name="heima-leadnews-wemedia-gateway" target="1.8" />
       <module name="minIO-demo" target="1.8" />
+      <module name="tess4j-demo" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="freemarker-demo" options="-parameters" />
       <module name="heima-file-starter" options="-parameters" />
-      <module name="heima-leadnews" options="-parameters" />
+      <module name="heima-leadnews" options="" />
       <module name="heima-leadnews-apis" options="-parameters" />
       <module name="heima-leadnews-app-gateway" options="-parameters" />
       <module name="heima-leadnews-article" options="-parameters" />
@@ -55,6 +59,7 @@
       <module name="heima-leadnews-feign-api" options="-parameters" />
       <module name="heima-leadnews-gateway" options="" />
       <module name="heima-leadnews-model" options="-parameters" />
+      <module name="heima-leadnews-schedule" options="-parameters" />
       <module name="heima-leadnews-service" options="" />
       <module name="heima-leadnews-test" options="" />
       <module name="heima-leadnews-user" options="-parameters" />
@@ -62,6 +67,7 @@
       <module name="heima-leadnews-wemedia" options="-parameters" />
       <module name="heima-leadnews-wemedia-gateway" options="-parameters" />
       <module name="minIO-demo" options="-parameters" />
+      <module name="tess4j-demo" options="-parameters" />
     </option>
   </component>
 </project>

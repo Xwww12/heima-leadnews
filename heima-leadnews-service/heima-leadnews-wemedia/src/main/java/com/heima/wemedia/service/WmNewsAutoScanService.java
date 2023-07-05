@@ -8,5 +8,5 @@ public interface WmNewsAutoScanService {
      * 自动审核文章内容
      * @param id
      */
-    void autoScanWmNews(Integer id);
+    void autoScanWmNews(Integer id) throws Exception;
 }

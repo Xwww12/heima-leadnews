@@ -23,6 +23,7 @@ import com.heima.wemedia.mapper.WmNewsMaterialMapper;
 import com.heima.wemedia.service.WmMaterialService;
 import com.heima.wemedia.service.WmNewsAutoScanService;
 import com.heima.wemedia.service.WmNewsService;
+import com.heima.wemedia.service.WmNewsTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -48,6 +49,10 @@ public class WmNewsServiceImpl  extends ServiceImpl<WmNewsMapper, WmNews> implem
 
     @Resource
     private WmNewsAutoScanService wmNewsAutoScanService;
+
+    // 发布到延迟队列
+    @Resource
+    private WmNewsTaskService wmNewsTaskService;
 
     @Override
     public ResponseResult findAll(WmNewsPageReqDto dto) {
@@ -114,7 +119,9 @@ public class WmNewsServiceImpl  extends ServiceImpl<WmNewsMapper, WmNews> implem
 
         // 审核
         try {
-            wmNewsAutoScanService.autoScanWmNews(wmNews.getId());
+//            wmNewsAutoScanService.autoScanWmNews(wmNews.getId());
+            // 发布到延迟队列
+            wmNewsTaskService.addNewsToTask(wmNews.getId(), wmNews.getPublishTime());
         } catch (Exception e) {
             e.printStackTrace();
         }

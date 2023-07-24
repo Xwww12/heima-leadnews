@@ -30,7 +30,9 @@ public class AppTokenInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        // postHandle出现异常则不会执行
+        // afterCompletion即使出现异常了也会执行
         log.info("apTokenFilter清除ThreadLocal中的userId");
         AppThreadLocalUtil.clear();
     }

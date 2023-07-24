@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableAsync
-@EnableScheduling
+//@EnableScheduling
 @MapperScan("com.heima.wemedia.mapper")
 @EnableFeignClients(basePackages = "com.heima.apis")
 public class WemediaApplication {

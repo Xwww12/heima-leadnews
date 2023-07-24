@@ -27,7 +27,7 @@ public class WmTokenInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         // 清空登录用户id
         log.info("wmTokenFilter清除ThreadLocal中的userId");
         WmThreadLocalUtil.clear();

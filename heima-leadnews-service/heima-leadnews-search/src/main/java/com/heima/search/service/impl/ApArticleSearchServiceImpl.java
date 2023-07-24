@@ -43,11 +43,15 @@ public class ApArticleSearchServiceImpl implements ApArticleSearchService {
         if (dto == null || StringUtils.isBlank(dto.getSearchWords()))
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
 
+
         // 保存搜索词到历史
+        // ========================
         ApUser user = AppThreadLocalUtil.getUser();
         //异步调用 保存搜索记录
         if(user != null && dto.getFromIndex() == 0)
             apUserSearchService.insert(dto.getSearchWords(), user.getId());
+        // ========================
+
 
         // 开始设置查询条件 ==========
         SearchRequest searchRequest = new SearchRequest("app_info_article");
@@ -78,6 +82,7 @@ public class ApArticleSearchServiceImpl implements ApArticleSearchService {
         searchSourceBuilder.query(boolQueryBuilder);
         searchRequest.source(searchSourceBuilder);
         // 结束设置查询条件 ==========
+
 
         // 封装返回结果
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);

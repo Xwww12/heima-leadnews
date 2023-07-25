@@ -102,9 +102,9 @@ public class WmChannelServiceImpl extends ServiceImpl<WmChannelMapper, WmChannel
         // 参数校验
         if (id == null || id < 0)
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
-        Integer count = wmChannelMapper.selectCount(Wrappers.<WmChannel>query().eq("id", id));
-        if (count == 0)
-            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "频道不存在");
+        WmChannel wmChannel = wmChannelMapper.selectOne(Wrappers.<WmChannel>query().eq("id", id));
+        if (wmChannel == null || wmChannel.getStatus())
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "频道不存在或正在启用");
 
         // 删除
         boolean res = removeById(id);

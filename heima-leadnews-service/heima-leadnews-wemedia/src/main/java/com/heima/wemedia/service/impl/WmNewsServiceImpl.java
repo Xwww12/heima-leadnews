@@ -11,20 +11,22 @@ import com.heima.common.exception.CustomException;
 import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
+import com.heima.model.user.dtos.UserAuthDto;
+import com.heima.model.user.pojos.ApUserRealname;
 import com.heima.model.wemedia.dtos.WmNewsDto;
+import com.heima.model.wemedia.dtos.WmNewsListDto;
 import com.heima.model.wemedia.dtos.WmNewsPageReqDto;
-import com.heima.model.wemedia.pojos.WmMaterial;
-import com.heima.model.wemedia.pojos.WmNews;
-import com.heima.model.wemedia.pojos.WmNewsMaterial;
-import com.heima.model.wemedia.pojos.WmUser;
+import com.heima.model.wemedia.pojos.*;
 import com.heima.utils.thread.WmThreadLocalUtil;
 import com.heima.wemedia.mapper.WmMaterialMapper;
 import com.heima.wemedia.mapper.WmNewsMapper;
 import com.heima.wemedia.mapper.WmNewsMaterialMapper;
+import com.heima.wemedia.mapper.WmUserMapper;
 import com.heima.wemedia.service.WmMaterialService;
 import com.heima.wemedia.service.WmNewsAutoScanService;
 import com.heima.wemedia.service.WmNewsService;
 import com.heima.wemedia.service.WmNewsTaskService;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -39,7 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
-public class WmNewsServiceImpl  extends ServiceImpl<WmNewsMapper, WmNews> implements WmNewsService {
+public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> implements WmNewsService {
     @Resource
     private WmNewsMaterialMapper wmNewsMaterialMapper;
 
@@ -55,6 +57,9 @@ public class WmNewsServiceImpl  extends ServiceImpl<WmNewsMapper, WmNews> implem
 
     @Resource
     private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Resource
+    private WmUserMapper wmUserMapper;
 
     @Override
     public ResponseResult findAll(WmNewsPageReqDto dto) {
@@ -196,6 +201,87 @@ public class WmNewsServiceImpl  extends ServiceImpl<WmNewsMapper, WmNews> implem
 
         boolean result = updateById(wmNews);
         return ResponseResult.okResult(result);
+    }
+
+    @Override
+    public ResponseResult listVo(WmNewsListDto dto) {
+        // 参数校验
+        if (dto == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        String title = dto.getTitle();
+        Integer status = dto.getStatus();
+        Integer page = dto.getPage();
+        Integer size = dto.getSize();
+        if (page == null) page = 0;
+        if (size == null) size = 10;
+        page = Math.max(page, 0);
+        size = Math.max(size, 10);
+
+        // 条件查询
+        LambdaQueryWrapper<WmNews> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(StringUtils.isNotBlank(title), WmNews::getTitle, title)
+                .eq(status != null, WmNews::getStatus, status)
+                .orderByDesc(WmNews::getCreatedTime);
+        // 分页查询
+        Page<WmNews> pageWrapper = new Page<>(page, size);
+
+        // 查询文章信息
+        page(pageWrapper, wrapper);
+
+        // 查询作者姓名
+        List<WmNews> records = pageWrapper.getRecords();
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (WmNews record : records) {
+            WmUser wmUser = wmUserMapper.selectById(record.getUserId());
+            String jsonString = JSON.toJSONString(record);
+            Map map = JSON.parseObject(jsonString, Map.class);
+            map.put("authorName", wmUser.getName());
+            res.add(map);
+        }
+
+        return ResponseResult.okResult(res);
+    }
+
+    @Override
+    public ResponseResult authPass(UserAuthDto dto) {
+        // 参数校验
+        if (dto == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        Integer id = dto.getId();
+        if (id == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+
+        // 查找文章是否存在
+        WmNews wmNews = getOne(Wrappers.<WmNews>query().eq("id", id));
+        if (wmNews == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "文章不存在");
+
+        // 修改审核状态为通过
+        wmNews.setStatus((short) 4);
+        boolean res = updateById(wmNews);
+
+        return ResponseResult.okResult(res);
+    }
+
+    @Override
+    public ResponseResult authFail(UserAuthDto dto) {
+        // 参数校验
+        if (dto == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        Integer id = dto.getId();
+        if (id == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+
+        // 查找文章是否存在
+        WmNews wmNews = getOne(Wrappers.<WmNews>query().eq("id", id));
+        if (wmNews == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "文章不存在");
+
+        // 修改审核状态为通过
+        wmNews.setStatus((short) 2);
+        boolean res = updateById(wmNews);
+
+        return ResponseResult.okResult(res);
     }
 
     // 自动选择封面图片数量

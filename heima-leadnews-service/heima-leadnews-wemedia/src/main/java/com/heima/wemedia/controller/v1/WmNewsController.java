@@ -1,7 +1,9 @@
 package com.heima.wemedia.controller.v1;
 
 import com.heima.model.common.dtos.ResponseResult;
+import com.heima.model.user.dtos.UserAuthDto;
 import com.heima.model.wemedia.dtos.WmNewsDto;
+import com.heima.model.wemedia.dtos.WmNewsListDto;
 import com.heima.model.wemedia.dtos.WmNewsPageReqDto;
 import com.heima.wemedia.service.WmNewsService;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +39,25 @@ public class WmNewsController {
     @PostMapping("/down_or_up")
     public ResponseResult downOrUpNews(@RequestBody WmNewsDto dto) {
         return wmNewsService.downOrUpNews(dto);
+    }
+
+    @PostMapping("list_vo")
+    public ResponseResult listVo(@RequestBody WmNewsListDto dto) {
+        return wmNewsService.listVo(dto);
+    }
+
+    @GetMapping("one_vo/{id}")
+    public ResponseResult oneVo(@PathVariable("id") Integer id) {
+        return wmNewsService.getDetail(id);
+    }
+
+    @PostMapping("/auth_pass")
+    public ResponseResult authPass(@RequestBody UserAuthDto dto) {
+        return wmNewsService.authPass(dto);
+    }
+
+    @PostMapping("/auth_fail")
+    public ResponseResult authFail(@RequestBody UserAuthDto dto) {
+        return wmNewsService.authFail(dto);
     }
 }

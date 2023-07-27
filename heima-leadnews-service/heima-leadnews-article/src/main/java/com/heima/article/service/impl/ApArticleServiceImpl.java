@@ -8,13 +8,18 @@ import com.heima.article.mapper.ApArticleMapper;
 import com.heima.article.service.ApArticleService;
 import com.heima.article.service.ArticleFreemarkerService;
 import com.heima.common.constants.ArticleConstants;
+import com.heima.common.constants.BehaviorConstants;
+import com.heima.common.redis.CacheService;
 import com.heima.model.article.dtos.ArticleDto;
 import com.heima.model.article.dtos.ArticleHomeDto;
 import com.heima.model.article.pojos.ApArticle;
 import com.heima.model.article.pojos.ApArticleConfig;
 import com.heima.model.article.pojos.ApArticleContent;
+import com.heima.model.behavior.ArticleInfoDto;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
+import com.heima.model.user.pojos.ApUser;
+import com.heima.utils.thread.AppThreadLocalUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -41,6 +47,9 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
 
     @Resource
     private ArticleFreemarkerService articleFreemarkerService;
+
+    @Resource
+    private CacheService cacheService;
 
     @Override
     public ResponseResult load(ArticleHomeDto dto, Short type) {
@@ -106,5 +115,41 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
         articleFreemarkerService.buildArticleToMinIO(apArticle, dto.getContent());
 
         return ResponseResult.okResult(apArticle.getId());
+    }
+
+    @Override
+    public ResponseResult loadBehavior(ArticleInfoDto dto) {
+        Integer userId = getCurUserId();
+        if (userId == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.NEED_LOGIN);
+        // 校验参数
+        if (dto == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        Long articleId = dto.getArticleId();
+        if (articleId == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+
+        // 查询redis
+        String key = BehaviorConstants.CACHE_BEHAVIOR_LIKE + articleId;
+        Boolean isLike = cacheService.sIsMember(key, userId.toString());
+        key = BehaviorConstants.CACHE_BEHAVIOR_UNLIKE + articleId;
+        Boolean isUnlike = cacheService.sIsMember(key, userId.toString());
+        key = BehaviorConstants.CACHE_BEHAVIOR_READ;
+        String viewCount = (String) cacheService.hGet(key, articleId.toString());
+
+        // 返回
+        HashMap<String, Object> res = new HashMap<>();
+        res.put("islike", isLike);      // 点赞
+        res.put("isunlike", isUnlike);  // 不喜欢
+        res.put("iscollection", false); // 收藏
+        res.put("isfollow", false);     // 关注
+        res.put("viewCount", Integer.valueOf(viewCount == null ? "0" : viewCount));// 阅读数
+        return ResponseResult.okResult(res);
+    }
+
+    private Integer getCurUserId() {
+        // 获取登录用户
+        ApUser user = AppThreadLocalUtil.getUser();
+        return user == null ? null : user.getId();
     }
 }

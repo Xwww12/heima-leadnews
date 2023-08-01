@@ -3,12 +3,10 @@ package com.heima.article.controller.v1;
 import com.heima.article.service.ApArticleService;
 import com.heima.common.constants.ArticleConstants;
 import com.heima.model.article.dtos.ArticleHomeDto;
-import com.heima.model.behavior.ArticleInfoDto;
+import com.heima.model.behavior.dto.ArticleInfoDto;
+import com.heima.model.behavior.dto.CollectionBehaviorDto;
 import com.heima.model.common.dtos.ResponseResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -18,9 +16,15 @@ public class ArticleHomeController {
     @Resource
     private ApArticleService apArticleService;
 
+    /**
+     * 加载首页
+     * @param dto
+     * @return
+     */
     @PostMapping("/load")
-    public ResponseResult load(@RequestBody ArticleHomeDto articleHomeDto) {
-        return apArticleService.load(articleHomeDto, ArticleConstants.LOADTYPE_LOAD_MORE);
+    public ResponseResult load(@RequestBody ArticleHomeDto dto){
+        //        return apArticleService.load(dto, ArticleConstants.LOADTYPE_LOAD_MORE);
+        return apArticleService.load2(dto, ArticleConstants.LOADTYPE_LOAD_MORE,true);
     }
 
     @PostMapping("/loadmore")

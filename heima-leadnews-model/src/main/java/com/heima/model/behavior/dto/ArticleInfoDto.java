@@ -1,4 +1,4 @@
-package com.heima.model.behavior;
+package com.heima.model.behavior.dto;
 
 import lombok.Data;
 

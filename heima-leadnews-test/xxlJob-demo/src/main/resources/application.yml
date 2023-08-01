@@ -1,0 +1,10 @@
+server:
+  port: ${xxl.port:8881}
+
+xxl:
+  job:
+    admin:
+      addresses: http://192.168.200.130:8888/xxl-job-admin
+    executor:
+      appname: sharding
+      port: ${executor.port:9999}    # 随意

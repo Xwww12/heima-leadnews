@@ -1,9 +1,8 @@
 package com.heima.behavior.service;
 
-import com.heima.model.behavior.ArticleInfoDto;
-import com.heima.model.behavior.LikesBehaviorDto;
-import com.heima.model.behavior.ReadBehaviorDto;
-import com.heima.model.behavior.UnLikesBehaviorDto;
+import com.heima.model.behavior.dto.LikesBehaviorDto;
+import com.heima.model.behavior.dto.ReadBehaviorDto;
+import com.heima.model.behavior.dto.UnLikesBehaviorDto;
 import com.heima.model.common.dtos.ResponseResult;
 
 public interface BehaviorService {

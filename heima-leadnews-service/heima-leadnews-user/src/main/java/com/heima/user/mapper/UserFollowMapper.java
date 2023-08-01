@@ -7,4 +7,8 @@ public interface UserFollowMapper {
     public Boolean follow(Integer userId, Integer followId);
 
     public Boolean fan(Integer userId, Integer followId);
+
+    Boolean cancelFan(Integer userId, Integer authorId);
+
+    Boolean cancelFollow(Integer userId, Integer authorId);
 }

@@ -28,6 +28,7 @@
       <module fileurl="file://$PROJECT_DIR$/heima-leadnews-test/minIO-demo/minIO-demo.iml" filepath="$PROJECT_DIR$/heima-leadnews-test/minIO-demo/minIO-demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/heima-leadnews-test/mongo-demo/mongo-demo.iml" filepath="$PROJECT_DIR$/heima-leadnews-test/mongo-demo/mongo-demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/heima-leadnews-test/tess4j-demo/tess4j-demo.iml" filepath="$PROJECT_DIR$/heima-leadnews-test/tess4j-demo/tess4j-demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/heima-leadnews-test/xxlJob-demo/xxlJob-demo.iml" filepath="$PROJECT_DIR$/heima-leadnews-test/xxlJob-demo/xxlJob-demo.iml" />
     </modules>
   </component>
 </project>

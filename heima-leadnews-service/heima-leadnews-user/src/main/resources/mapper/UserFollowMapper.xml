@@ -9,10 +9,25 @@
         VALUES
             (#{userId}, #{followId}, NOW());
     </insert>
+
     <insert id="fan">
         INSERT INTO
             ap_user_fan(user_id, fans_id, created_time)
         VALUES
             (#{followId}, #{userId}, NOW())
     </insert>
+
+    <delete id="cancelFan">
+        DELETE FROM
+            ap_user_fan
+        WHERE
+            user_id = #{authorId} AND fans_id = #{userId};
+    </delete>
+
+    <delete id="cancelFollow">
+        DELETE FROM
+            ap_user_follow
+        WHERE
+            user_id = #{userId} AND follow_id = #{authorId};
+    </delete>
 </mapper>

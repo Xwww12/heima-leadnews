@@ -1,10 +1,9 @@
 package com.heima.behavior.controller.v1;
 
 import com.heima.behavior.service.BehaviorService;
-import com.heima.model.behavior.ArticleInfoDto;
-import com.heima.model.behavior.LikesBehaviorDto;
-import com.heima.model.behavior.ReadBehaviorDto;
-import com.heima.model.behavior.UnLikesBehaviorDto;
+import com.heima.model.behavior.dto.LikesBehaviorDto;
+import com.heima.model.behavior.dto.ReadBehaviorDto;
+import com.heima.model.behavior.dto.UnLikesBehaviorDto;
 import com.heima.model.common.dtos.ResponseResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

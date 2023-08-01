@@ -1,5 +1,6 @@
 package com.heima.article.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heima.article.mapper.ApArticleConfigMapper;
@@ -15,7 +16,9 @@ import com.heima.model.article.dtos.ArticleHomeDto;
 import com.heima.model.article.pojos.ApArticle;
 import com.heima.model.article.pojos.ApArticleConfig;
 import com.heima.model.article.pojos.ApArticleContent;
-import com.heima.model.behavior.ArticleInfoDto;
+import com.heima.model.article.vos.HotArticleVo;
+import com.heima.model.behavior.dto.ArticleInfoDto;
+import com.heima.model.behavior.dto.CollectionBehaviorDto;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.user.pojos.ApUser;
@@ -128,23 +131,78 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
         Long articleId = dto.getArticleId();
         if (articleId == null)
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        Integer authorId = dto.getAuthorId();
+        if (authorId == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
 
         // 查询redis
         String key = BehaviorConstants.CACHE_BEHAVIOR_LIKE + articleId;
         Boolean isLike = cacheService.sIsMember(key, userId.toString());
         key = BehaviorConstants.CACHE_BEHAVIOR_UNLIKE + articleId;
         Boolean isUnlike = cacheService.sIsMember(key, userId.toString());
-        key = BehaviorConstants.CACHE_BEHAVIOR_READ;
+        key = BehaviorConstants.CACHE_BEHAVIOR_READ + articleId;
         String viewCount = (String) cacheService.hGet(key, articleId.toString());
+        key = BehaviorConstants.CACHE_BEHAVIOR_COLLECTION + articleId;
+        Boolean isCollection = cacheService.sIsMember(key, userId.toString());
+        key = BehaviorConstants.CACHE_BEHAVIOR_FOLLOW + authorId;
+        Boolean isFollow = cacheService.sIsMember(key, userId.toString());
 
         // 返回
         HashMap<String, Object> res = new HashMap<>();
         res.put("islike", isLike);      // 点赞
         res.put("isunlike", isUnlike);  // 不喜欢
-        res.put("iscollection", false); // 收藏
-        res.put("isfollow", false);     // 关注
+        res.put("iscollection", isCollection); // 收藏
+        res.put("isfollow", isFollow);     // 关注
         res.put("viewCount", Integer.valueOf(viewCount == null ? "0" : viewCount));// 阅读数
         return ResponseResult.okResult(res);
+    }
+
+    @Override
+    public ResponseResult collection(CollectionBehaviorDto dto) {
+        Integer userId = getCurUserId();
+        if (userId == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.NEED_LOGIN);
+        // 校验参数
+        if (dto == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        Long articleId = dto.getEntryId();  // 文章id
+        Short operation = dto.getOperation();   // 0 收藏  1 取消收藏
+        Date publishedTime = dto.getPublishedTime();    // 发布时间
+        Short type = dto.getType();         // 0 文章  1 动态
+        if (articleId == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        if (operation == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        if (publishedTime == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        if (type == null)
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+
+        // 保存到数据库
+        Boolean res = false;
+        if (operation == 0) {
+            res = apArticleMapper.saveCollection(userId, articleId, publishedTime, type);
+            String key = BehaviorConstants.CACHE_BEHAVIOR_COLLECTION + articleId;
+            cacheService.sAdd(key, userId.toString());
+        } else if (operation == 1) {
+            res = apArticleMapper.cancelCollection(userId, articleId, type);
+            String key = BehaviorConstants.CACHE_BEHAVIOR_COLLECTION + articleId;
+            cacheService.sRemove(key, userId.toString());
+        }
+        return ResponseResult.okResult(res);
+    }
+
+    @Override
+    public ResponseResult load2(ArticleHomeDto dto, Short type, Boolean firstPage) {
+        String jsonStr = cacheService.get(ArticleConstants.HOT_ARTICLE_FIRST_PAGE + dto.getTag());
+
+        if (StringUtils.isNotBlank(jsonStr)) {
+            HotArticleVo hotArticleVo = JSON.parseObject(jsonStr, HotArticleVo.class);
+            return ResponseResult.okResult(hotArticleVo);
+        }
+
+        // 没有缓存时
+        return load(dto, type);
     }
 
     private Integer getCurUserId() {

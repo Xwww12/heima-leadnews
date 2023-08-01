@@ -3,10 +3,9 @@ package com.heima.behavior.service.impl;
 import com.heima.common.constants.BehaviorConstants;
 import com.heima.behavior.service.BehaviorService;
 import com.heima.common.redis.CacheService;
-import com.heima.model.behavior.ArticleInfoDto;
-import com.heima.model.behavior.LikesBehaviorDto;
-import com.heima.model.behavior.ReadBehaviorDto;
-import com.heima.model.behavior.UnLikesBehaviorDto;
+import com.heima.model.behavior.dto.LikesBehaviorDto;
+import com.heima.model.behavior.dto.ReadBehaviorDto;
+import com.heima.model.behavior.dto.UnLikesBehaviorDto;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.user.pojos.ApUser;
@@ -14,7 +13,6 @@ import com.heima.utils.thread.AppThreadLocalUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 
 @Service
 public class BehaviorServiceImpl implements BehaviorService {

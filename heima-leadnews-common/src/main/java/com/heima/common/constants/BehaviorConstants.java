@@ -16,4 +16,10 @@ public class BehaviorConstants {
 
     // 文章不喜欢的所有用户redis前缀  behavior:read:文章id
     public static final String CACHE_BEHAVIOR_UNLIKE = "behavior:unlike:";
+
+    // 订阅
+    public static final String CACHE_BEHAVIOR_FOLLOW = "behavior:follow:";
+
+    // 收藏
+    public static final String CACHE_BEHAVIOR_COLLECTION = "behavior:collection:";
 }

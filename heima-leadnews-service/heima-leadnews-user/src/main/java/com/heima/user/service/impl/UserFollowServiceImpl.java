@@ -1,5 +1,7 @@
 package com.heima.user.service.impl;
 
+import com.heima.common.constants.BehaviorConstants;
+import com.heima.common.redis.CacheService;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.user.dtos.UserRelationDto;
@@ -17,6 +19,9 @@ import javax.annotation.Resource;
 public class UserFollowServiceImpl implements UserFollowService {
     @Resource
     private UserFollowMapper userFollowMapper;
+
+    @Resource
+    private CacheService cacheService;
 
     @Override
     public ResponseResult follow(UserRelationDto dto) throws Exception {
@@ -39,8 +44,17 @@ public class UserFollowServiceImpl implements UserFollowService {
                     userFollowMapper.follow(userId, authorId);
             if (!res)
                 throw new Exception("关注失败");
+            String key = BehaviorConstants.CACHE_BEHAVIOR_FOLLOW + authorId;
+            cacheService.sAdd(key, userId.toString());
         } else {
             // 取关
+            res = userFollowMapper.cancelFan(userId, authorId) &&
+                    userFollowMapper.cancelFollow(userId, authorId);
+            if (!res)
+                throw new Exception("取关失败");
+            String key = BehaviorConstants.CACHE_BEHAVIOR_FOLLOW + authorId;
+            cacheService.sRemove(key, userId.toString());
+
         }
 
         return ResponseResult.okResult(res);

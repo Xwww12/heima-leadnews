@@ -29,7 +29,7 @@ public class ProducerQuickStart {
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
         // 消息
-        ProducerRecord<String, String> record = new ProducerRecord<>("topic001","key001","hello kafka");
+        ProducerRecord<String, String> record = new ProducerRecord<>("itcast_topic_input","key001","hello kafka hello kafka");
 
         // 发送消息
         producer.send(record, new Callback() {

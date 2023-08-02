@@ -63,6 +63,12 @@
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy:2.5.14" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.kafka:kafka-streams:2.5.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.kafka:kafka-clients:2.5.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.luben:zstd-jni:1.4.4-7" level="project" />
+    <orderEntry type="library" name="Maven: org.lz4:lz4-java:1.7.1" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial.snappy:snappy-java:1.1.7.3" level="project" />
+    <orderEntry type="library" name="Maven: org.rocksdb:rocksdbjni:5.18.3" level="project" />
     <orderEntry type="module" module-name="heima-leadnews-model" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.46" level="project" />
     <orderEntry type="library" name="Maven: org.mybatis:mybatis:3.5.1" level="project" />
@@ -150,12 +156,6 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-messaging:5.2.13.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.2.13.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.retry:spring-retry:1.2.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.kafka:kafka-clients:2.5.1" level="project" />
-    <orderEntry type="library" name="Maven: com.github.luben:zstd-jni:1.4.4-7" level="project" />
-    <orderEntry type="library" name="Maven: org.lz4:lz4-java:1.7.1" level="project" />
-    <orderEntry type="library" name="Maven: org.xerial.snappy:snappy-java:1.1.7.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.kafka:kafka-streams:2.5.1" level="project" />
-    <orderEntry type="library" name="Maven: org.rocksdb:rocksdbjni:5.18.3" level="project" />
     <orderEntry type="library" name="Maven: com.aliyun:aliyun-java-sdk-core:4.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.13" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.14" level="project" />

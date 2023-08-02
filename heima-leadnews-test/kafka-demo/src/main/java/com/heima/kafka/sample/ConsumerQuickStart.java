@@ -28,7 +28,7 @@ public class ConsumerQuickStart {
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
 
         //3.订阅主题
-        consumer.subscribe(Collections.singletonList("topic001"));
+        consumer.subscribe(Collections.singletonList("itcast_topic_out"));
 
         // 接收消息
         try {
@@ -44,7 +44,7 @@ public class ConsumerQuickStart {
             e.printStackTrace();
             System.out.println("错误信息：" + e);
         } finally {
-            consumer.commitSync();      // 同步提交，如果之前异步提交失败了，这里会不断重试知道发送成功
+            consumer.commitSync();      // 同步提交，如果之前异步提交失败了，这里会不断重试直到发送成功
         }
     }
 }

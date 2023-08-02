@@ -7,6 +7,7 @@ import com.heima.model.article.pojos.ApArticle;
 import com.heima.model.behavior.dto.ArticleInfoDto;
 import com.heima.model.behavior.dto.CollectionBehaviorDto;
 import com.heima.model.common.dtos.ResponseResult;
+import com.heima.model.mess.ArticleVisitStreamMess;
 
 public interface ApArticleService extends IService<ApArticle> {
     ResponseResult load(ArticleHomeDto dto, Short type);
@@ -40,4 +41,10 @@ public interface ApArticleService extends IService<ApArticle> {
      * @return
      */
     ResponseResult load2(ArticleHomeDto dto, Short type, Boolean firstPage);
+
+    /**
+     * 更新文章在数据库，缓存中的分值
+     * @param mess
+     */
+    void updateScore(ArticleVisitStreamMess mess);
 }

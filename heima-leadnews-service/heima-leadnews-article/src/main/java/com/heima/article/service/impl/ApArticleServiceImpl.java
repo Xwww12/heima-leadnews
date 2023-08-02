@@ -21,17 +21,21 @@ import com.heima.model.behavior.dto.ArticleInfoDto;
 import com.heima.model.behavior.dto.CollectionBehaviorDto;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
+import com.heima.model.mess.ArticleVisitStreamMess;
 import com.heima.model.user.pojos.ApUser;
 import com.heima.utils.thread.AppThreadLocalUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.nntp.Article;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle> implements ApArticleService {
@@ -203,6 +207,95 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
 
         // 没有缓存时
         return load(dto, type);
+    }
+
+    @Override
+    public void updateScore(ArticleVisitStreamMess mess) {
+        // 更新文章用户行为数据
+        ApArticle apArticle = updateArticle(mess);
+
+        Integer score = computeScore(apArticle) * 3;
+        // 替换文章对应频道的热点数据
+        replaceDataToRedis(apArticle, score, ArticleConstants.HOT_ARTICLE_FIRST_PAGE + apArticle.getChannelId());
+
+        // 替换推荐对应的热点数据
+        replaceDataToRedis(apArticle, score, ArticleConstants.HOT_ARTICLE_FIRST_PAGE + ArticleConstants.DEFAULT_TAG);
+
+    }
+
+    private void replaceDataToRedis(ApArticle apArticle, Integer score, String key) {
+        String articleListStr = cacheService.get(key);
+        if (StringUtils.isNotBlank(articleListStr)) {
+            List<HotArticleVo> hotArticleVoList = JSON.parseArray(articleListStr, HotArticleVo.class);
+
+            boolean flag = true;
+
+            //如果缓存中存在该文章，只更新分值
+            for (HotArticleVo hotArticleVo : hotArticleVoList) {
+                if (hotArticleVo.getId().equals(apArticle.getId())) {
+                    hotArticleVo.setScore(score);
+                    flag = false;
+                    break;
+                }
+            }
+
+            //如果缓存中不存在，查询缓存中分值最小的一条数据，进行分值的比较，如果当前文章的分值大于缓存中的数据，就替换
+            if (flag) {
+                if (hotArticleVoList.size() >= 30) {
+                    hotArticleVoList = hotArticleVoList.stream().sorted(Comparator.comparing(HotArticleVo::getScore).reversed()).collect(Collectors.toList());
+                    HotArticleVo lastHot = hotArticleVoList.get(hotArticleVoList.size() - 1);
+                    if (lastHot.getScore() < score) {
+                        hotArticleVoList.remove(lastHot);
+                        HotArticleVo hot = new HotArticleVo();
+                        BeanUtils.copyProperties(apArticle, hot);
+                        hot.setScore(score);
+                        hotArticleVoList.add(hot);
+                    }
+
+
+                } else {
+                    HotArticleVo hot = new HotArticleVo();
+                    BeanUtils.copyProperties(apArticle, hot);
+                    hot.setScore(score);
+                    hotArticleVoList.add(hot);
+                }
+            }
+            //缓存到redis
+            hotArticleVoList = hotArticleVoList.stream().sorted(Comparator.comparing(HotArticleVo::getScore).reversed()).collect(Collectors.toList());
+            cacheService.set(key, JSON.toJSONString(hotArticleVoList));
+
+        }
+    }
+
+    private ApArticle updateArticle(ArticleVisitStreamMess mess) {
+        ApArticle apArticle = getById(mess.getArticleId());
+        // 累加用户行为数据
+        apArticle.setCollection(apArticle.getCollection() == null ? 0 : apArticle.getCollection() + mess.getCollect());
+        apArticle.setComment(apArticle.getComment() == null ? 0 : apArticle.getComment() + mess.getComment());
+        apArticle.setLikes(apArticle.getLikes() == null ? 0 : apArticle.getLikes() + mess.getLike());
+        apArticle.setViews(apArticle.getViews() == null ? 0 : apArticle.getViews() + mess.getView());
+
+        updateById(apArticle);
+        return apArticle;
+
+    }
+
+    private Integer computeScore(ApArticle apArticle) {
+        Integer score = 0;
+        if(apArticle.getLikes() != null){
+            score += apArticle.getLikes() * ArticleConstants.HOT_ARTICLE_LIKE_WEIGHT;
+        }
+        if(apArticle.getViews() != null){
+            score += apArticle.getViews();
+        }
+        if(apArticle.getComment() != null){
+            score += apArticle.getComment() * ArticleConstants.HOT_ARTICLE_COMMENT_WEIGHT;
+        }
+        if(apArticle.getCollection() != null){
+            score += apArticle.getCollection() * ArticleConstants.HOT_ARTICLE_COLLECTION_WEIGHT;
+        }
+
+        return score;
     }
 
     private Integer getCurUserId() {

@@ -37,7 +37,11 @@
             <version>2.3.0</version>
         </dependency>
 
-
+        <!-- kafka stream -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
